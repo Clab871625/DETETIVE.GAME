@@ -1,9 +1,9 @@
 const suspects = [
-  { id: 'helena', name: 'Helena Vidal', role: 'A herdeira', initial: 'H', color: 'linear-gradient(145deg,#7b624d,#23241e)', clue: 'Helena discutiu com a vítima às 23h, mas uma camareira confirma que ela estava no terraço no horário do crime.' },
-  { id: 'miguel', name: 'Miguel Torres', role: 'O sócio', initial: 'M', color: 'linear-gradient(145deg,#4b5f64,#20231f)', clue: 'Miguel conhecia a combinação do cofre. Em seu paletó há pó dourado igual ao da biblioteca.' },
-  { id: 'beatriz', name: 'Beatriz Luz', role: 'A jornalista', initial: 'B', color: 'linear-gradient(145deg,#725e68,#22231f)', clue: 'A gravação de Beatriz registra o sino da recepção à meia-noite; ela estava no saguão.' },
-  { id: 'dante', name: 'Dante Moretti', role: 'O chef', initial: 'D', color: 'linear-gradient(145deg,#605b49,#20211e)', clue: 'Dante preparou a bebida, porém o veneno foi colocado no copo depois que ele deixou o salão.' },
-  { id: 'sophia', name: 'Sophia Reis', role: 'A curadora', initial: 'S', color: 'linear-gradient(145deg,#4f6656,#22231f)', clue: 'Sophia afirma não ter entrado na biblioteca, mas suas digitais estão no decantador da vítima.' }
+  { id: 'helena', name: 'Helena Vidal', role: 'A herdeira', initial: 'H', image: 'assets/characters/helena.jpg', clue: 'Helena discutiu com a vítima às 23h, mas uma camareira confirma que ela estava no terraço no horário do crime.' },
+  { id: 'miguel', name: 'Miguel Torres', role: 'O sócio', initial: 'M', image: 'assets/characters/miguel.jpg', clue: 'Miguel conhecia a combinação do cofre. Em seu paletó há pó dourado igual ao da biblioteca.' },
+  { id: 'beatriz', name: 'Beatriz Luz', role: 'A jornalista', initial: 'B', image: 'assets/characters/beatriz.jpg', clue: 'A gravação de Beatriz registra o sino da recepção à meia-noite; ela estava no saguão.' },
+  { id: 'dante', name: 'Dante Moretti', role: 'O chef', initial: 'D', image: 'assets/characters/dante.jpg', clue: 'Dante preparou a bebida, porém o veneno foi colocado no copo depois que ele deixou o salão.' },
+  { id: 'sophia', name: 'Sophia Reis', role: 'A curadora', initial: 'S', image: 'assets/characters/sophia.jpg', clue: 'Sophia afirma não ter entrado na biblioteca, mas suas digitais estão no decantador da vítima.' }
 ];
 const locations = [
   { id:'library', name:'Biblioteca', hint:'Cena do crime · 2 pistas', bg:'linear-gradient(135deg,#3a3024,#151713)', clue:{title:'Pó de restauração',type:'EVIDÊNCIA FÍSICA',text:'Há pó dourado no tapete, usado apenas na restauração dos quadros que Sophia supervisionava.'}},
@@ -16,7 +16,7 @@ const state = { screen:'home', player:'', room:'', players:[], round:1, actions:
 const $ = (s) => document.querySelector(s);
 const $$ = (s) => [...document.querySelectorAll(s)];
 
-function showScreen(name){ $$('.screen').forEach(el=>el.classList.remove('active')); $(`#${name}-screen`).classList.add('active'); state.screen=name; }
+function showScreen(name){ $$('.screen').forEach(el=>el.classList.remove('active')); $(`#${name}-screen`).classList.add('active'); state.screen=name; window.scrollTo(0,0); }
 function initials(name){ return name.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase(); }
 function roomCode(){ return Math.random().toString(36).slice(2,6).toUpperCase(); }
 function toast(message){ const el=$('#toast'); el.textContent=message; el.classList.add('show'); setTimeout(()=>el.classList.remove('show'),2200); }
@@ -47,7 +47,7 @@ function renderGame(){
   $('#round-current').textContent=state.round;$('#actions-left').textContent=state.actions;$('#clue-count').textContent=state.clues.length;
   $('#game-players').innerHTML=state.players.map((p,i)=>`<div class="player-row ${i===0?'active':''}"><i class="avatar">${initials(p.name)}</i><span>${p.name}</span><small class="score">${p.score} XP</small></div>`).join('');
   $('#turn-name').textContent='Seu turno';
-  $('#suspect-grid').innerHTML=suspects.map(s=>`<button class="suspect-card ${state.selected===s.id?'selected':''}" data-select="${s.id}" data-type="suspect"><div class="portrait" style="--portrait:${s.color}" data-initial="${s.initial}"></div><h3>${s.name}</h3><p>${s.role.toUpperCase()}</p><span class="status-tag">${state.investigated.has(s.id)?'INTERROGADO':'NÃO INTERROGADO'}</span></button>`).join('');
+  $('#suspect-grid').innerHTML=suspects.map((s,index)=>`<button class="suspect-card ${state.selected===s.id?'selected':''}" data-select="${s.id}" data-type="suspect" aria-label="${s.name}, ${s.role}, ${state.investigated.has(s.id)?'interrogado':'não interrogado'}"><div class="portrait"><img src="${s.image}" alt="Retrato de ${s.name}" ${index>1?'loading="lazy"':''} /></div><div class="suspect-info"><h3>${s.name}</h3><p>${s.role.toUpperCase()}</p><span class="status-tag">${state.investigated.has(s.id)?'INTERROGADO':'NÃO INTERROGADO'}</span></div></button>`).join('');
   $('#location-grid').innerHTML=locations.map(l=>`<button class="location-card ${state.selected===l.id?'selected':''} ${state.investigated.has(l.id)?'done':''}" style="--bg:${l.bg}" data-select="${l.id}" data-type="location"><b>${l.name}</b><span>${state.investigated.has(l.id)?'LOCAL INVESTIGADO':l.hint.toUpperCase()}</span></button>`).join('');
   $('#clue-list').innerHTML=state.clues.map(c=>`<article class="clue-card"><span>${c.type}</span><h3>${c.title}</h3><p>${c.text}</p></article>`).join('');
   $('#investigate-button').disabled=!state.selected||state.actions<=0||state.investigated.has(state.selected);

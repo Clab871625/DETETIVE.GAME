@@ -2,6 +2,10 @@
 
 Protótipo de um jogo competitivo de investigação para 3 a 6 jogadores. Cada detetive entra em uma sala, investiga locais, interroga suspeitos e tenta ser o primeiro a acusar corretamente o criminoso.
 
+**Jogar online:** https://detetive-game.vercel.app
+
+O visual foi projetado para desktop e celular, com retratos ilustrados dos cinco suspeitos e controles adaptados para toque.
+
 ## Executar
 
 Abra `index.html` em qualquer navegador moderno. Não há dependências nem etapa de instalação. Se preferir servir por HTTP, execute `node serve.mjs` e acesse `http://127.0.0.1:4173`.
