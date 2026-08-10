@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#10120f" />
+    <title>Arquivo 13 — Jogo de investigação</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="noise"></div>
+
+    <main id="app">
+      <section id="home-screen" class="screen active">
+        <nav class="topbar">
+          <a class="brand" href="#" aria-label="Arquivo 13">
+            <span class="brand-mark">A<span>13</span></span>
+            <span>ARQUIVO<br />CONFIDENCIAL</span>
+          </a>
+          <span class="case-stamp">ACESSO RESTRITO</span>
+        </nav>
+
+        <div class="hero">
+          <div class="hero-copy">
+            <p class="eyebrow">JOGO DE DEDUÇÃO · 3–6 DETETIVES</p>
+            <h1>Encontre a verdade.<br /><em>Antes dos outros.</em></h1>
+            <p class="lede">Uma cena. Cinco suspeitos. Pistas que não contam toda a história. Entre na sala, investigue e seja o primeiro a identificar o criminoso.</p>
+
+            <form id="entry-form" class="entry-card">
+              <label for="player-name">IDENTIFICAÇÃO DO DETETIVE</label>
+              <input id="player-name" maxlength="18" autocomplete="off" placeholder="Digite seu codinome" required />
+              <div class="entry-actions">
+                <button class="button primary" type="submit" data-mode="create">CRIAR NOVA SALA <span>→</span></button>
+                <button class="button ghost" type="button" id="join-toggle">ENTRAR COM CÓDIGO</button>
+              </div>
+              <div id="join-fields" class="join-fields" aria-hidden="true">
+                <input id="room-code-input" maxlength="6" autocomplete="off" placeholder="CÓDIGO DA SALA" />
+                <button class="button small" type="submit" data-mode="join">ENTRAR</button>
+              </div>
+            </form>
+          </div>
+
+          <aside class="evidence-board" aria-label="Painel de evidências">
+            <div class="photo main-photo"><div class="photo-scene"><span>HOTEL<br />VÉSPERA</span></div><small>CÂMERA 04 · 23:47</small></div>
+            <div class="photo note"><b>CASO Nº 013</b><span>“Todos tinham um motivo.”</span></div>
+            <div class="photo suspect-shot"><div class="silhouette">?</div><small>IDENTIDADE DESCONHECIDA</small></div>
+            <span class="thread t1"></span><span class="thread t2"></span><span class="thread t3"></span>
+            <span class="pin p1"></span><span class="pin p2"></span><span class="pin p3"></span>
+          </aside>
+        </div>
+      </section>
+
+      <section id="lobby-screen" class="screen">
+        <nav class="topbar compact">
+          <div class="brand"><span class="brand-mark">A<span>13</span></span><span>ARQUIVO<br />CONFIDENCIAL</span></div>
+          <button class="text-button" data-action="leave">← SAIR DA SALA</button>
+        </nav>
+        <div class="lobby-wrap">
+          <div class="lobby-heading">
+            <div><p class="eyebrow">SALA DE INVESTIGAÇÃO</p><h2>Aguardando detetives</h2></div>
+            <button class="room-code" id="copy-code" title="Copiar código"><span>CÓDIGO DA SALA</span><b id="room-code">----</b><i>⧉</i></button>
+          </div>
+          <div class="lobby-grid">
+            <div class="panel roster-panel">
+              <div class="panel-title"><span>AGENTES CONECTADOS</span><b id="player-count">1 / 6</b></div>
+              <div id="lobby-players" class="lobby-players"></div>
+              <button id="add-bot" class="add-agent">＋ ADICIONAR DETETIVE SIMULADO</button>
+            </div>
+            <div class="briefing">
+              <p class="eyebrow">COMO JOGAR</p>
+              <ol>
+                <li><b>Investigue</b><span>Escolha locais e interrogue suspeitos para revelar pistas.</span></li>
+                <li><b>Conecte</b><span>Compare depoimentos e descarte evidências contraditórias.</span></li>
+                <li><b>Acuse</b><span>Arrisque sua reputação para apontar o criminoso.</span></li>
+              </ol>
+              <div class="host-controls">
+                <label>DIFICULDADE DO CASO
+                  <select id="difficulty"><option value="rookie">RECRUTA</option><option value="inspector" selected>INSPETOR</option><option value="legend">LENDA</option></select>
+                </label>
+                <button id="start-game" class="button primary">ABRIR O CASO <span>→</span></button>
+                <small>Mínimo de 3 detetives</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="game-screen" class="screen">
+        <header class="game-header">
+          <div class="brand mini"><span class="brand-mark">A<span>13</span></span></div>
+          <div class="case-title"><span>CASO 013</span><b>O ÚLTIMO BRINDE</b></div>
+          <div class="round"><span>RODADA</span><b><i id="round-current">1</i> / 5</b></div>
+          <button id="rules-button" class="icon-button" title="Como jogar">?</button>
+        </header>
+
+        <div class="game-layout">
+          <aside class="players-sidebar">
+            <p class="section-label">DETETIVES</p>
+            <div id="game-players"></div>
+            <div class="turn-note"><span class="pulse"></span><p><b id="turn-name">Seu turno</b><small>Escolha uma ação</small></p></div>
+          </aside>
+
+          <section class="case-board">
+            <div class="case-summary">
+              <div><p class="eyebrow">O CRIME</p><h2>O Último Brinde</h2></div>
+              <p>À meia-noite, o empresário Augusto Vidal foi encontrado sem vida na biblioteca do Hotel Véspera. O assassino ainda está entre os convidados.</p>
+            </div>
+
+            <div class="tabs" role="tablist">
+              <button class="tab active" data-tab="suspects">SUSPEITOS <span>5</span></button>
+              <button class="tab" data-tab="locations">LOCAIS <span>4</span></button>
+              <button class="tab" data-tab="clues">MINHAS PISTAS <span id="clue-count">1</span></button>
+            </div>
+
+            <div id="suspects-tab" class="tab-content active"><div id="suspect-grid" class="suspect-grid"></div></div>
+            <div id="locations-tab" class="tab-content"><div id="location-grid" class="location-grid"></div></div>
+            <div id="clues-tab" class="tab-content"><div id="clue-list" class="clue-list"></div></div>
+
+            <div class="action-bar">
+              <div><span>AÇÕES RESTANTES</span><b id="actions-left">2</b></div>
+              <button class="button secondary" id="investigate-button" disabled>INVESTIGAR SELEÇÃO</button>
+              <button class="button danger" id="accuse-button">FAZER ACUSAÇÃO</button>
+            </div>
+          </section>
+
+          <aside class="log-sidebar">
+            <p class="section-label">REGISTRO DO CASO</p>
+            <div id="game-log" class="game-log"></div>
+          </aside>
+        </div>
+      </section>
+    </main>
+
+    <div id="modal" class="modal" aria-hidden="true">
+      <div class="modal-card">
+        <button class="modal-close" aria-label="Fechar">×</button>
+        <div id="modal-content"></div>
+      </div>
+    </div>
+    <div id="toast" class="toast"></div>
+    <script src="app.js"></script>
+  </body>
+</html>
